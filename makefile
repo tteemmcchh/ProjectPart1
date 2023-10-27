@@ -3,15 +3,16 @@ USER_DIR=.
 CPPFLAGS += -isystem $(GTEST_DIR)/include
 CXXFLAGS += -g -Wall -Wextra -pthread
 
+BUILD = build
 TESTS = tests
 
 GTEST_HEADERS = $(GTEST_DIR)/include/gtest/*.h \
-                $(GTEST_DIR)/include/gtest/internal/*.h
+$(GTEST_DIR)/include/gtest/internal/*.h
 
-all: $(TESTS)
+all: $(BUILD) $(TESTS)
 
 clean :
-	rm -f $(TESTS) gtest.a gtest_main.a *.o
+	rm -f $(BUILD) $(TESTS) runapp app.o gtest.a gtest_main.a *.o
 
 GTEST_SRCS_ = $(GTEST_DIR)/src/*.cc $(GTEST_DIR)/src/*.h $(GTEST_HEADERS)
 
@@ -45,6 +46,11 @@ tests : account_tests.o gtest_main.a
 #hello: app.o account_tests.o
 #	g++ app.o account_tests.o -o hello
 
+app.o : $(USER_DIR)/app.cpp $(USER_DIR)/internal/methods.h
+	$(CXX) $(CXXFLAGS) -c $(USER_DIR)/app.cpp
+
+build : app.o
+	$(CXX) $(CXXFLAGS) -lpthread $^ -o $@
 
 #hello: account_tests.o
 #	g++ account_tests.o -o hello
